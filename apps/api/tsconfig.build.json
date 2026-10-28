@@ -1,0 +1,13 @@
+{
+  // Dev uses tsx (no build step). Production compiles to plain JS so the image
+  // doesn't ship TypeScript, tsx or esbuild, and startup doesn't pay a transpile cost.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": "src",
+    "sourceMap": true
+  },
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts"]
+}

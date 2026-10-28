@@ -1,0 +1,40 @@
+# Local development: `pnpm db:up` starts Postgres only (the API runs natively).
+# Production-style check: `docker compose --profile full up -d --build` also runs the API image.
+
+services:
+  db:
+    image: pgvector/pgvector:pg16 # Postgres 16 + pgvector (for RAG later)
+    environment:
+      # Applied only when the volume is first created. To change them: `docker compose down -v`.
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    profiles: ["full"]
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      # Inside Compose the database host is the service name `db`, not localhost.
+      DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      PORT: 3001
+    ports:
+      - "3002:3001" # 3002 so it doesn't clash with `pnpm dev:api` on 3001
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

@@ -1,0 +1,9 @@
+# {$DOMAIN} is read from the container's environment (set in .env).
+{$DOMAIN} {
+	reverse_proxy api:3001 {
+		# Send each streamed chunk immediately. Proxies buffer by default, which turns
+		# a token-by-token stream into one big blob at the end. That's the #1
+		# "streaming works locally but not in prod" bug.
+		flush_interval -1
+	}
+}

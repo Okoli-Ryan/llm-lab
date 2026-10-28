@@ -1,0 +1,6 @@
+# Force LF on files that run inside Linux. If Git on Windows converts these to CRLF,
+# bash fails with "$'\r': command not found" and Caddy can choke on its config.
+*.sh        text eol=lf
+Caddyfile   text eol=lf
+Dockerfile  text eol=lf
+*.yml       text eol=lf

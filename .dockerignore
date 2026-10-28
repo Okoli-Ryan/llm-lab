@@ -1,0 +1,9 @@
+# Build context is the repo root (the lockfile lives there), so keep it lean.
+# Without this, your local node_modules (Windows binaries!) and .env get sent to the
+# Docker daemon and can leak into the image.
+**/node_modules
+**/dist
+.env
+.git
+apps/web
+*.log

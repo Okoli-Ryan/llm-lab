@@ -1,0 +1,90 @@
+.app {
+  font-family: system-ui, sans-serif;
+  max-width: 720px;
+  height: 100vh;
+  margin: 0 auto;
+  padding: 16px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.app h1 {
+  font-size: 20px;
+  margin: 0 0 12px;
+}
+
+.message-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.empty {
+  color: #888;
+}
+
+.bubble {
+  max-width: 85%;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+.bubble.user {
+  align-self: flex-end;
+  background: #2563eb;
+  color: white;
+}
+
+.bubble.assistant {
+  align-self: flex-start;
+  background: #f1f1f1;
+}
+
+.bubble .content {
+  white-space: pre-wrap;
+}
+
+.cursor {
+  margin-left: 2px;
+  opacity: 0.6;
+}
+
+.status,
+.error {
+  color: #a33;
+}
+
+.composer {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.composer textarea {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font: inherit;
+  resize: none;
+}
+
+.composer button {
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  background: #111;
+  color: white;
+  cursor: pointer;
+}
+
+.composer button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

@@ -1,0 +1,39 @@
+# VPS overrides, layered on docker-compose.yml (see DEPLOY.md):
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml --profile full up -d --build
+# Add `--profile https` once a domain points at the server. Needs Compose v2.24+.
+
+services:
+  db:
+    # Never publish Postgres on a public server. Docker's port rules bypass ufw.
+    ports: !reset []
+    restart: unless-stopped
+
+  api:
+    # Reachable only from the server itself (Caddy or an SSH tunnel).
+    ports: !override
+      - "127.0.0.1:3002:3001"
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "3" }
+
+  caddy:
+    profiles: ["https"]
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:-}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data # certificates; losing this hits Let's Encrypt rate limits
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  caddy_data:
+  caddy_config:
